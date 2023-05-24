@@ -810,7 +810,7 @@ class EventsController extends BaseApiController
         }
 
         $view = $request->getView();
-        $view->setHeader('Content-Length', 0);
+        $view->setHeader('Content-Length', '0');
         $view->setResponseCode(Http::NO_CONTENT);
     }
 
