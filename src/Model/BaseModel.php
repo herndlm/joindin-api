@@ -10,19 +10,17 @@ use Joindin\Api\Request;
  * @property string|null $event_tz_cont For an event or event-related item, the first half of a TZ identifier
  * @property string|null $event_tz_place For an event or event-related item, the second half of a TZ identifier
  */
+#[AllowDynamicProperties]
 abstract class BaseModel
 {
-    protected $data;
-
-    public function __construct(array $data)
+    public function __construct(protected array $data)
     {
-        $this->data = $data;
     }
 
     /**
      * Retrieve a single element from the model or null if it doesn't exist
      *
-     * @param  string $field
+     * @param string $field
      *
      * @return mixed
      */
@@ -42,7 +40,7 @@ abstract class BaseModel
      *
      * @return array
      */
-    abstract protected function getDefaultFields();
+    abstract protected function getDefaultFields(): array;
 
     /**
      * Verbose fields in the output view
@@ -51,7 +49,7 @@ abstract class BaseModel
      *
      * @return array
      */
-    abstract protected function getVerboseFields();
+    abstract protected function getVerboseFields(): array;
 
     /**
      * List of subresource keys that may be in the data set from the mapper
@@ -61,7 +59,7 @@ abstract class BaseModel
      *
      * @return array
      */
-    public function getSubResources()
+    public function getSubResources(): array
     {
         return [];
     }
@@ -74,7 +72,7 @@ abstract class BaseModel
      *
      * @return array
      */
-    public function getOutputView(Request $request, $verbose = false)
+    public function getOutputView(Request $request, bool $verbose = false): array
     {
         $item = [];
 
@@ -94,7 +92,7 @@ abstract class BaseModel
             $value = $this->$name;
 
             // override if it is a date
-            if (substr(strval($output_name), -5) == '_date' && ! empty($value)) {
+            if (str_ends_with(strval($output_name), '_date') && ! empty($value)) {
                 if (is_numeric($value)) {
                     $value = '@' . $value;
                 }

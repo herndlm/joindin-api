@@ -88,7 +88,7 @@ class UserMapper extends ApiMapper
             $results          = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $results['total'] = $this->getTotalCount($sql, $data);
 
-            if ($results) {
+            if (!empty($results)) {
                 return $this->transformResults($results, $verbose);
             }
         }
@@ -435,7 +435,7 @@ class UserMapper extends ApiMapper
             $results          = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $results['total'] = $this->getTotalCount($sql, $data);
 
-            if ($results) {
+            if (!empty($results)) {
                 return $this->transformResults($results, $verbose);
             }
         }
@@ -469,10 +469,11 @@ class UserMapper extends ApiMapper
      * @param int $user_id
      *
      * @return false|string token
+     * @throws Exception
      */
     public function generateEmailVerificationTokenForUserId($user_id)
     {
-        $token = bin2hex(openssl_random_pseudo_bytes(8));
+        $token = bin2hex(random_bytes(8));
 
         $sql = "insert into email_verification_tokens set "
                . "user_id = :user_id, token = :token";
@@ -717,7 +718,7 @@ class UserMapper extends ApiMapper
      *
      * @return false|string $email The email address
      */
-    public function getEmailByUserId($user_id)
+    public function getEmailByUserId($user_id): false|string
     {
         $sql      = "select email from user where ID = :user_id";
         $stmt     = $this->_db->prepare($sql);
@@ -742,10 +743,11 @@ class UserMapper extends ApiMapper
      * @param int $user_id
      *
      * @return false|string
+     * @throws Exception
      */
     public function generatePasswordResetTokenForUserId($user_id)
     {
-        $token = bin2hex(openssl_random_pseudo_bytes(8));
+        $token = bin2hex(random_bytes(8));
 
         $sql = "insert into password_reset_tokens set "
                . "user_id = :user_id, token = :token";
